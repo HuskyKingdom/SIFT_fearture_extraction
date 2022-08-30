@@ -4,18 +4,15 @@
 <div align="center" id="readme-top">
   
  <br />
-
-  <h1 align="center">Grasps Detection</h1>
+<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/2.png" width="300" height="300"></br>
+</br>
+  <h1 align="center">SIFT Feature Extraction Algorithm</h1>
 
   <p align="center" >
   Distributed under the MIT License.
 
-This assignment includes several attempts to use deep learning techniques to train the neural network to learn a grasp detection, each of the grasp detection value consisting of five elements, they are : ( x ; y ; rotation angle ; opening ; jaw size ). The structure of this report file is divided into the following seven parts:</br>1. Grasp Detection using CNN + RGB image</br>
-2. Evaluations</br>
-3. Grasp Detection using CNN + RGB and Depth Image</br>
-4. Grasp Detection in the Wild</br>
-5. User Instructions</br>
-6. References/Related Works</br>
+This project involves the approach to extract SIFT(Scale-Invariant Feature Transform) features from training data of given dataset with 5 different classes, and clustering the result SIFT descriptors to form an dictionary of Bag-of-words representation. Eventually, generate keywords histograms for both training data and testing data, as well as label them to one of the cluster centers, classify the testing images to its nearest neighbor according to the distances of histograms.
+After classification of testing images, the program will run a set of tests to evaluate the classification performance. Moreover, the program also demonstrates the classification progress using varies histogram comparing mechanisms or different clustering parameters.
 
 <br />
 <a href="https://yuhang.topsoftint.com">Contact me at: <strong>yuhang@topsoftint.com</strong></a>
@@ -28,146 +25,137 @@ This assignment includes several attempts to use deep learning techniques to tra
 
 
 
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li><a href="#1">Grasp Detection using CNN + RGB image</a></li>
-    <li><a href="#2">Evaluations</a></li>
-    <li><a href="#3">Grasp Detection using CNN + RGB and Depth Image</a></li>
-    <li><a href="#4">Grasp Detection in the Wild</a></li>
-    <li><a href="#5">User Instructions</a></li>
-    <li><a href="#6">References/Related Works</a></li>
-  </ol>
-</details>
-
-
-
 <!-- ABOUT THE PROJECT -->
-## Grasp Detection using CNN + RGB image
-<p id="1"></p>
+## Instructions
 
-Two architectures were used to perform the grasp detection, one of them are being tested and used in the main code for the later sections, the other one, however, due to its worse performance is not used in later sections, but instead its code was provided individually.
+**Note that, since the boundary checking is not implemented, each option/index entered much be from given options or index that within meaningful range.**
 
-Please refer to the user instructions section for more information about the file structure. The following content of this section will explain each of those architectures and illustrate their training loss performances.
+The project files are with the following directories:
+- SIFT.py
+- cluster
+- ./features
+- ./COMP338_Assignment1_Dataset
 
-1. Direct Grasp Detection with and without batch normalization
+Where the SIFT is the project code, cluster is the saved clustered centers variable list of type sklearn.kmeans object. Two folders, features and COMP338_Assignment_Dataset are the folder for saved SIFT features, and given image dataset, respectively.
 
-This is the version that tested stable and was later used in other sections.
+1. Feature Extraction of Training data.
 
-It takes an RGB image tensor of shape (N\*3\*1024\*1024) as input and returns a single grasp detection output array of 5 elements. For each image, it`s ground truth is selected by the one with the highest Jaccard Index value of the current prediction. The architecture of the network is as in below:
+Run the python file SIFT.py.
 
-<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/1.png">
+The program first reading the images from the given dataset in the corresponding directories, then shows the welcoming message with two options to perform the SIFT feature extraction on training data.
+Usually, by our testing, the average time taken for the extraction of images will take up to one hour for the given 350 training images, this is however not convenient for code testing during the programing stage, therefore we made the program to be able to save the features ever time it extracted them, to the feature directory, as well as load the saved files when needed. The following list shows the SIFT feature contents saved, with respect to the file name in feature directory:
 
-This architecture is referenced from Joseph Redmon and Anelia Angelova`s paer[0].
-This architecture is later improved by adding, for each convolutional layers, a batch normalization.
-Please see the following figure of its performance of loss function values over episode, note that each episode takes a batch of 5 images as input.
+_“SIFT_Features_Train”_ – SIFT keypoint descriptors from training images 
+_“SIFT_Features_Train_Points”_ - SIFT keypoints from training images
 
-<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/2.png" width="250" height="400">
+It is recommended to enter option 2 to directly load the extracted features for time saving purpose. The technical details of SIFT feature extraction is explained in later section.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+2. Dictionary Generation
 
-2. Multi-Grasp Detection
+Once successfully obtained the features from training dataset, the program will then cluster the SIFT descriptors of training data to any numbers of cluster centers. The number of centers is given by the variable Num_WORDS at line 14.
 
-This part of the code is *NOT* included in the main code file, instead it was provided individually in an seperate file, please refer to the user instruction section for more details about this.
+Note that this step is time consuming too by our testing, therefore the program also gives an option to load the clustered centers instead of performing clustering.
 
-Please also note that this Multi-Grasp Detection is an implementation of the Multi-Grasp Detection method proposed by Joseph Redmon and Anelia Angelova`s paer[0], because of that, the networks architecture remains the same as Direct Grasp Detection.
+If letter “Y” is entered, the program will load the cluster centers from file “cluster”. Otherwise, if the letter “N” is entered, the program will perform k-mean clustering to all descriptors of training dataset and save the resulting clustering center list.
 
-The network in this part takes the input tensor of shape (64\*3\*128\*128), where it is dividing the RGB image into a grid of 8\*8 cells, each cell has shape (128\*128\*3), since
-  
-the original image has shape (1024\*1024\*3).
-For each of the cell, the neural network produces 6 elements output: ( heatmap; x ;
-y ; rotation angle ; opening ; jaw size ), where the heatmap is a probability of a single region contains a grasp.
+3. Image representation with a histogram of codewords
+
+With the clustering centers ready, the program then ready to represent images from both training and testing dataset as histograms of clustered centers.
+
+Firstly, the program will read the testing images, and then try to extract the features from them as we did to training dataset. The loading per-trained features option and perform feature extraction option are both given, as shown below:
+
+The following list shows the SIFT feature contents saved, with respect to the file name in feature directory:
+
+_“SIFT_Features_Test”_ – SIFT keypoint descriptors from testing 
+images 
+_“SIFT_Features_Test_Points”_ - SIFT keypoints from testing images
+
+It is recommended to enter option 2 to directly load the extracted features for time saving purpose.
+After obtaining SIFT features of testing images, we now need to label each descriptor from both training and testing images into one of the clustered centers.
+
+It is recommended to enter option 1 to directly load the labels for time saving purpose. Please also note that the labelling is using L2 distance between descriptors, this will be explained in detail in later section.
+Once the labeling is done, the program then allows you to view some image patches from a certain class label.
+
+Please note that index entered must not exceed (the number of clustered centers - 1), otherwise the program will exist with errors, since the boundary checking is not required.
+
+Please see an example shows following with class label “5” is entered:
 
 <img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/3.png" width="300" height="300">
 
+Note that if an descriptor and its corresponding keypoint is at the location that on the edge of the image and with high sigma value, the image patch of it might not be drawn correctly since the information is too abstract.
 
-This implementation is not used in later analyzation since I have got some problem with its backpropagation, that is also the potential reason why the above graph is not welly converging.
+You can enter -1 to continue or enter another class label to view image patches, as suggested by the program output.
 
+Then, if -1 is entered, the program will generate the BOW(Bag-of-Words) histograms for each image in both training and testing dataset. Implementation Details will be explained in later section.
 
+Please not that, for testing purpose, the program will also store generated labels and histograms into “./features” folder for both datasets.
 
-## Evaluations
-<p id="2"></p>
+The following list shows the meanings of each file saved, with respect to the file name in feature directory:
 
-The evaluation method I have used is Rectangle Metric, based on Jaccard Index, as mentioned in the lectures. Since we have multiple ground truths, therefore, for each prediction result, we iterate through all its ground truth values, if one of the ground truths values and the predicted value satisfies both the following conditions, then the predicted value is referred as correct:
+“Traing_labels” – Saved labels for each descriptor of training images with respect to cluster centers
 
-1. The difference of the rotational angle prediction is no larger than 30 degrees.
-2. The Jaccard index (or IOU ratio) of two parallel rectangles is no larger than 0.25.
+“Test_labels” – Saved labels for each descriptor of testing images with respect to cluster centers
 
-Jaccard index (or IOU ratio) in our implementation is calculated as the Intersection area divided by Union area between the predicted rectangle and the ground truth rectangle, assuming no rotation is performed (parallel), as shown in below.
+“Traing_hist” – Saved BOW histogram of training dataset
 
-$$
-J(A,B) = \frac{|A \cap B|}{|A \cup B|}
-$$
+“Test_hist” - Saved BOW histogram of testing dataset
 
-By using the above method, we evaluated the results produced by the direct grasp detection with batch normalization and without over the testing data, both trained 500 episode. The direct grasp detection with batch normalization predicted 13 correct predictions over 19 images, achieves 73% accuracy, whereas the one without batch normalization produces only 8 correct predictions over 19 images and achieves 43% accuracy. This is because the later one converges far slower than the one with batch normalization, under the same number of training episode, furthermore, the batch normalization also helps the earlier one avoids gradient explosion / dilation in DNN.
+4. Classification & Evaluation
 
-Please see the following visualized result produced by the direct grasp detection with batch normalization. Note that the rotation of the rectangle in degrees is not performed but instead marked in the result as negative stands for rotation anticlockwise about the rectangle center.
+After obtained the BOW histograms of each image, then program then performs L2 distance on each BOW testing image histograms to compare to all BOW training image histograms, and hence conclude the corresponding testing image to the same image class as a certain BOW training image histogram, which has minimum L2 BOW histogram distance to the current testing BOW histogram.
+By comparing the grand truth of all testing images and their conclude(classified) classes, the program evaluate the performance of the classification and showing the error rates.
 
-<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/4.png" width="500" height="200">
+You can also view the images that and correctly & incorrectly classified in each 0-4 different class, where the following list shows the relation between class indexes and class name:
 
+- Class 0 – Airplanes
+- Class 1 – Cars
+- Class 2 – Dog
+- Class 3 – Faces
+- Class 4 – Keyboard
+- Enter -1 to skip this stage.
 
-## Grasp Detection using CNN + RGB and Depth Image
-<p id="3"></p>
+5. Histogram Intersection
 
-In this section, instead of passing only the RGB image (1024\*1024\*3) into the network, we pass the image with shape (1024\*1024\*4) into the network, with additionally a depth channel. In this case, the architecture of the neural network are mostly remains the same, but with the first convolutional layer receiving an input of 4 channels instead of 3.
-Note that in our implementation, the “perfect_depth.tiff” was used for each of the image. Please see the following figure of its performance of loss function values over episode, note that each episode takes a batch of 5 images and their corresponding depth data.
+By replacing the L2 method with the histogram intersection method for comparing histograms, the program runs step 4 and 5 again, and present the result.The classifying result viewing and confusion matrix generation is also performed in this particular step.
 
-After the careful evaluation process, we obtained the accuracy rate of 47.3% by using RGBD data. It is clear to tell that this performance is not as expected, higher than only use RGB data, it is probably due to the lake of training time, so called under-fitting, since for the RGBD input we have got 4 channels, that brings 1\*1024\*1024 more weights to the network, therefore we need to train the network many times more than the current 500 episode.
+6. Reducing the number of clustered centers
 
-Furthermore. In such a case of deep neural network, it is also worth to mention that a ResNet can be implemented to improve the performance, however, due to the time limitation we have not got enough time to test that out.
-The following shows to you a sample of image for the RGBD network predicted correctly and incorrectly, one for each.
+As mentioned in the documentation of this assignment, in step 7 we need to perform an experiment with different number of clustering centers.
 
-## Wild Data
-<p id="4"></p>
-
-We have collected 10 wild data from the internet[1] to test out our direct grasp detection architecture with batch normalization.
-
-Before feed the image into our network, each of them has been filled into 1024\*1024 pixels to fit the network`s requirements. Unfortunately, we have obtained accuracy of 0% on wild images, the issue was firstly assumed to be the padding method, however, no matter how we fill the image, the network is still not output well. We then turned to try image normalization before feeding, the result is still not good.
-
-The issue was potentially caused by the problem proposed by MobileNet V2, the general problem of the deep neural network, that is, the deeper NN will cause more and more information loss, with that be in mind, a possible improvement is to use Residual Deep Neural network for training, however, that part is not implemented in this project.
-
-## User Instructions
-<p id="5"></p>
-
-Our final submission file contains the following instances:
-- am01.py
-- am01_attmp2.py - data_net.pkl
-- data_net2.pkl
-- d_data_net.pkl
-- Data
-- wild
-- log
-
-The main implementations are in **am01.py**, run the file and follow the command line interface to walk through all four steps required by assignment specification. Note that this file uses the direct grasp detection with batch normalization. The training process will automatically save the network model once all 500 episode is done.
-
-The Multi-Grasp Detection implementations are in **am01_attmp2.py**, this file only contains its network and training implementation.
-
-**data_net.pkl** contains the saved model for the direct grasp detection with batch normalization mentioned in this paper, trained 500 episodes.
-
-**data_net.pkl2** contains the saved model for the direct grasp detection without batch normalization mentioned in this paper, trained 500 episodes.
-
-**d_data_net.pkl** contains the saved model for the direct grasp detection with batch normalization and depth information as mentioned in this paper, trained 500 episodes.
-
-Please note that the RGB evaluation option in the command line interface only loads model that namely as **data_net.pkl**, if you wish to see the evaluation of **data_net.pkl2**, please alter the file name.
-
-Data folder contains the original data provided by the assignment specification.
-
-wild folder contains the wild data collected.
-
-log folder is generated automatically by Tensorboard to record the real-time performance of DNNs.
+In my implementation, this is achievable by simply change the variable Num_WORDS in line 14 of the code. This value is set by default to 500.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+## Implementation Details & Theory
+
+Provided <a href="">here</a>. Please do not directly copy.
 
 
 
 ## References / Related Works
 <p id="6"></p>
 
-[0] Redmon, Joseph, and Anelia Angelova. "Real-time grasp detection using convolutional neural networks." 2015 IEEE international conference on robotics and automation (ICRA). IEEE, 2015.
+GitHub resources[1]:
+https://github.com/rmislam/PythonSIFT
 
-[1] https://www.kaggle.com/oneoneliu/cornell-grasp
+David G. Lowe`s Paper[2]:
+https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf
+
+External library[3]:
+https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+
+Keypoint obj by OpenCV:
+https://docs.opencv.org/3.4/d2/d29/classcv_1_1KeyPoint.html
+
+Taylor series:
+https://en.wikipedia.org/wiki/Taylor_series
+
+K-Means Algorithm & KNN:
+https://en.wikipedia.org/wiki/K-means_clustering 
+
+https://towardsdatasciencecoma-simple-introduction-to-k-nearest-neighbors-algorithm-b3519ed98e
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
