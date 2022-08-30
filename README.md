@@ -4,7 +4,7 @@
 <div align="center" id="readme-top">
   
  <br />
-<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/2.png" width="300" height="300"></br>
+<img src="https://github.com/HuskyKingdom/SIFT_fearture_extraction/blob/main/Imgs/2.png" width="500" height="300"></br>
 </br>
   <h1 align="center">SIFT Feature Extraction Algorithm</h1>
 
@@ -80,7 +80,7 @@ Please note that index entered must not exceed (the number of clustered centers 
 
 Please see an example shows following with class label “5” is entered:
 
-<img src="https://raw.githubusercontent.com/HuskyKingdom/Grasp_Detection/main/imgs/3.png" width="300" height="300">
+<img src="https://github.com/HuskyKingdom/SIFT_fearture_extraction/blob/main/Imgs/1.png" width="300" height="300">
 
 Note that if an descriptor and its corresponding keypoint is at the location that on the edge of the image and with high sigma value, the image patch of it might not be drawn correctly since the information is too abstract.
 
@@ -125,12 +125,6 @@ As mentioned in the documentation of this assignment, in step 7 we need to perfo
 In my implementation, this is achievable by simply change the variable Num_WORDS in line 14 of the code. This value is set by default to 500.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-## Implementation Details & Theory
-
-Provided <a href="">here</a>. Please do not directly copy.
 
 
 
