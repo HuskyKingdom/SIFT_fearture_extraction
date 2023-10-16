@@ -15,9 +15,9 @@ This project involves the approach to extract SIFT(Scale-Invariant Feature Trans
 After classification of testing images, the program will run a set of tests to evaluate the classification performance. Moreover, the program also demonstrates the classification progress using varies histogram comparing mechanisms or different clustering parameters.
 
 <br />
-<a href="https://yuhang.topsoftint.com">Contact me at: <strong>yuhang@topsoftint.com</strong></a>
+<a href="https://yuhang.topsoftint.com">Contact me at: <strong>me@yhscode.com</strong></a>
 
-<a href="https://yuhang.topsoftint.com"><strong>View my full bio.</strong></a>
+<a href="https://yhscode.com"><strong>View my full bio.</strong></a>
     <br />
     <br />
   </p>
